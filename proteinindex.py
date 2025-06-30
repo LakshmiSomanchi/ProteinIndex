@@ -121,14 +121,10 @@ with tab1:
     st.header("Protein Index & Affordability")
     st.markdown("A prototype dashboard to identify cost-effective protein-rich foods based on expert research.")
 
-    # Streamlit sidebar elements are global, so they need unique keys if used in multiple tabs
-    # or ensure they are placed outside the tab context if they apply to all tabs.
-    # For clarity, I'm placing the filters within the tab context, but they will still
-    # appear on the sidebar and affect the active tab.
-
     st.sidebar.header("Protein Filters")
     st.sidebar.markdown("Adjust the sliders and selections below to find the best protein sources.")
 
+    # Protein Region Filter
     if 'Region' in protein_data.columns and not protein_data['Region'].empty:
         protein_regions = st.sidebar.multiselect(
             "Select Region(s) (Protein)",
@@ -140,28 +136,47 @@ with tab1:
         st.sidebar.warning("Protein Region data not available or empty. Cannot filter by region.")
         protein_regions = []
 
-    # Ensure min_value and max_value for slider are appropriate for 'Protein Index'
+    # Protein Index Range Slider
+    # Set dynamic min/max for slider based on actual data
     min_protein_index_data = int(protein_data['Protein Index'].min()) if 'Protein Index' in protein_data.columns and not protein_data['Protein Index'].empty else 0
     max_protein_index_data = int(protein_data['Protein Index'].max()) if 'Protein Index' in protein_data.columns and not protein_data['Protein Index'].empty else 100
+    
+    # Ensure default slider values are within the actual data range
+    default_min_index = min_protein_index_data
+    default_max_index = max_protein_index_data
+    if min_protein_index_data <= 70 <= max_protein_index_data:
+        default_min_index = 70
+    if min_protein_index_data <= 100 <= max_protein_index_data:
+        default_max_index = 100
 
     min_index, max_index = st.sidebar.slider(
         "Protein Index Range (Protein)",
         min_value=min_protein_index_data,
         max_value=max_protein_index_data,
-        value=(min(70, max_protein_index_data), max(100, min_protein_index_data)),
+        value=(default_min_index, default_max_index),
         step=5,
         help="Filter foods by their protein content efficiency (higher is better)."
     )
 
-    # Ensure min_value and max_value for slider are appropriate for 'Cost per gram protein'
+    # Max Cost per gram protein Slider
+    # Set dynamic min/max for slider based on actual data
     min_cost_data = float(protein_data['Cost per gram protein'].min()) if 'Cost per gram protein' in protein_data.columns and not protein_data['Cost per gram protein'].empty else 0.1
     max_cost_data = float(protein_data['Cost per gram protein'].max()) if 'Cost per gram protein' in protein_data.columns and not protein_data['Cost per gram protein'].empty else 5.0
+
+    # Ensure default slider value is within the actual data range
+    default_max_cost = 1.0
+    if min_cost_data <= 1.0 <= max_cost_data:
+        default_max_cost = 1.0
+    elif max_cost_data < 1.0:
+        default_max_cost = max_cost_data # If max data is less than 1.0, set default to max data
+    elif min_cost_data > 1.0:
+        default_max_cost = min_cost_data # If min data is greater than 1.0, set default to min data
 
     max_cost = st.sidebar.slider(
         "Max Cost per gram protein (USD) (Protein)",
         min_value=min_cost_data,
         max_value=max_cost_data,
-        value=min(1.0, max_cost_data),
+        value=default_max_cost,
         step=0.05,
         help="Filter foods based on their affordability (lower cost is better)."
     )
@@ -234,14 +249,14 @@ with tab1:
             st.markdown("Average Cost per gram protein: N/A (no data)")
 
         # Identify the most cost-effective food in the filtered list
-        if not filtered_protein_data.empty and 'Cost per gram protein' in filtered_protein_data.columns:
+        if not filtered_protein_data.empty and 'Cost per gram protein' in filtered_protein_data.columns and not filtered_protein_data['Cost per gram protein'].empty:
             most_cost_effective = filtered_protein_data.loc[filtered_protein_data['Cost per gram protein'].idxmin()]
             st.markdown(f"The most **cost-effective** protein source in the filtered list is **{most_cost_effective['Food']}** (Protein Index: {most_cost_effective['Protein Index']}, Cost: ${most_cost_effective['Cost per gram protein']:.2f}/g protein).")
         else:
             st.markdown("Most cost-effective protein source: N/A (no data)")
 
         # Identify the highest protein index food in the filtered list
-        if not filtered_protein_data.empty and 'Protein Index' in filtered_protein_data.columns:
+        if not filtered_protein_data.empty and 'Protein Index' in filtered_protein_data.columns and not filtered_protein_data['Protein Index'].empty:
             highest_protein_index = filtered_protein_data.loc[filtered_protein_data['Protein Index'].idxmax()]
             st.markdown(f"The protein source with the **highest Protein Index** is **{highest_protein_index['Food']}** (Protein Index: {highest_protein_index['Protein Index']}, Cost: ${highest_protein_index['Cost per gram protein']:.2f}/g protein).")
         else:
@@ -255,6 +270,7 @@ with tab2:
     st.sidebar.header("GFSI Filters")
     st.sidebar.markdown("Adjust the sliders and selections below to explore GFSI data.")
 
+    # GFSI Country Filter
     if 'Country' in gfsi_data.columns and not gfsi_data['Country'].empty:
         gfsi_countries = st.sidebar.multiselect(
             "Select Country(ies) (GFSI)",
@@ -266,7 +282,8 @@ with tab2:
         st.sidebar.warning("GFSI Country data not available or empty. Cannot filter by country.")
         gfsi_countries = []
 
-    # Ensure min_value and max_value for slider are appropriate for 'GFSI Score'
+    # GFSI Score Range Slider
+    # Set dynamic min/max for slider based on actual data
     min_gfsi_score_data = int(gfsi_data['GFSI Score'].min()) if 'GFSI Score' in gfsi_data.columns and not gfsi_data['GFSI Score'].empty else 0
     max_gfsi_score_data = int(gfsi_data['GFSI Score'].max()) if 'GFSI Score' in gfsi_data.columns and not gfsi_data['GFSI Score'].empty else 100
 
@@ -274,7 +291,7 @@ with tab2:
         "GFSI Score Range (GFSI)",
         min_value=min_gfsi_score_data,
         max_value=max_gfsi_score_data,
-        value=(min_gfsi_score_data, max_gfsi_score_data), # Default to full range
+        value=(min_gfsi_score_data, max_gfsi_score_data), # Default to full range of loaded data
         step=1,
         help="Filter countries by their GFSI score (higher is better)."
     )
@@ -338,8 +355,12 @@ with tab2:
         else:
             st.markdown("Average GFSI Score: N/A (no data)")
 
-        highest_score_country = filtered_gfsi_data.loc[filtered_gfsi_data['GFSI Score'].idxmax()]
-        st.markdown(f"Country with the **highest GFSI Score**: **{highest_score_country['Country']}** ({highest_score_country['GFSI Score']:.2f})")
+        # Ensure these operations are safe even if filtered_gfsi_data is very small or has all same values
+        if not filtered_gfsi_data['GFSI Score'].empty and filtered_gfsi_data['GFSI Score'].nunique() > 0:
+            highest_score_country = filtered_gfsi_data.loc[filtered_gfsi_data['GFSI Score'].idxmax()]
+            st.markdown(f"Country with the **highest GFSI Score**: **{highest_score_country['Country']}** ({highest_score_country['GFSI Score']:.2f})")
 
-        lowest_score_country = filtered_gfsi_data.loc[filtered_gfsi_data['GFSI Score'].idxmin()]
-        st.markdown(f"Country with the **lowest GFSI Score**: **{lowest_score_country['Country']}** ({lowest_score_country['GFSI Score']:.2f})")
+            lowest_score_country = filtered_gfsi_data.loc[filtered_gfsi_data['GFSI Score'].idxmin()]
+            st.markdown(f"Country with the **lowest GFSI Score**: **{lowest_score_country['Country']}** ({lowest_score_country['GFSI Score']:.2f})")
+        else:
+            st.markdown("Cannot determine highest/lowest GFSI score (insufficient data or all scores are identical).")

@@ -3,9 +3,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from streamlit.components.v1 import html
-import folium
-from streamlit_folium import st_folium # Import the Streamlit Folium component
+from streamlit.components.v1 import html # Import html component for embedding
 
 # --- Sample Data (from your original dashboard) ---
 data = pd.DataFrame({
@@ -15,41 +13,14 @@ data = pd.DataFrame({
     'Region': ['Asia', 'US', 'Asia', 'Europe', 'US', 'Europe', 'US', 'Asia']
 })
 
-# --- Placeholder Data for Maps (YOU NEED TO REPLACE THIS WITH YOUR REAL DATA) ---
-# Assume ISO-alpha3 country codes for joining with GeoJSON
-# Placeholder GFSI data (replace with your actual data and values)
-# Example: Higher value means worse food security
-gfsi_data = pd.DataFrame({
-    'country_code': ['USA', 'CHN', 'IND', 'DEU', 'FRA', 'GBR', 'BRA', 'NGA'],
-    'gfsi_score': [20, 50, 70, 15, 25, 18, 40, 85] # Example scores
-})
-
-# Placeholder Technoserve Presence data (replace with your actual data)
-# Example: 1 for presence, 0 for no presence
-technoserve_presence_data = pd.DataFrame({
-    'country_code': ['IND', 'NGA', 'BRA', 'KEN', 'ETH'], # Example countries
-    'presence': [1, 1, 1, 1, 1]
-})
-
-# Placeholder Action Needed data (replace with your actual data)
-# Example: Higher value means more urgent action needed
-action_needed_data = pd.DataFrame({
-    'country_code': ['IND', 'NGA', 'ETH', 'COD', 'SDN'], # Example countries
-    'action_urgency': [3, 4, 3, 5, 5]
-})
-
-# --- Local GeoJSON File Path ---
-# IMPORTANT: Ensure 'countries_110m.geojson' is in the same directory as this script.
-local_geojson_path = "countries_110m.geojson"
-
 # --- Streamlit Page Configuration ---
 st.set_page_config(layout="wide", page_title="Protein Index & Food Security Dashboard")
 
 # --- Dashboard Title ---
-st.title("Protein Index & Global Food Security Dashboard")
-st.markdown("A prototype dashboard to identify cost-effective protein-rich foods and visualize global food security data.")
+st.title("Protein Index & Affordability Dashboard")
+st.markdown("A prototype dashboard to identify cost-effective protein-rich foods based on expert research.")
 
-# --- Sidebar for Filters (from previous code) ---
+# --- Sidebar for Filters ---
 st.sidebar.header("Protein Source Filter Options")
 st.sidebar.markdown("Adjust the sliders and selections below to find the best protein sources.")
 
@@ -151,69 +122,52 @@ else:
     st.markdown(f"The protein source with the **highest Protein Index** is **{highest_protein_index['Food']}** (Protein Index: {highest_protein_index['Protein Index']}, Cost: ${highest_protein_index['Cost per gram protein']:.2f}/g protein).")
 
 
-# --- Integrated Map Section with Folium ---
-st.subheader("Interactive Global Food Security Map")
-st.markdown("Use the layer control icon (top right of the map) to toggle different data layers.")
+# --- Individual Maps Section ---
+st.subheader("Global Food Security Visualizations")
+st.markdown("Select the maps below to view different aspects of global food security and relevant initiatives.")
 
-# Create a Folium map object, centered and zoomed appropriately
-m = folium.Map(location=[20, 0], zoom_start=2, tiles="cartodbpositron") # Centered near equator, world view
+# Define the HTML embed codes for each map
+# NOTE: The 'Technoserve\'s Presence' and 'Action Needed' maps currently use the same embed code.
+# If 'Action Needed' should be a different map, please provide its unique embed code.
+map_embed_codes = {
+    "GFSI World Hunger Data": """
+    <div style="min-height:369px; width:100%" id="datawrapper-vis-d0yRp"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/d0yRp/embed.js" charset="utf-8" data-target="#datawrapper-vis-d0yRp"></script><noscript><img src="https://datawrapper.dwcdn.net/d0yRp/full.png" alt="" /></noscript></div>
+    """,
+    "Technoserve's Presence": """
+    <div style="min-height:357px; width:100%" id="datawrapper-vis-pf5wv"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/pf5wv/embed.js" charset="utf-8" data-target="#datawrapper-vis-pf5wv"></script><noscript><img src="https://datawrapper.dwcdn.net/pf5wv/full.png" alt="" /></noscript></div>
+    """,
+    "Action Needed (Check Code)": """
+    <div style="min-height:555px; width:100%" id="datawrapper-vis-pf5wv"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/pf5wv/embed.js" charset="utf-8" data-target="#datawrapper-vis-pf5wv"></script><noscript><img src="https://datawrapper.dwcdn.net/pf5wv/full.png" alt="" /></noscript></div>
+    """
+}
 
-# Layer 1: GFSI World Hunger Data (Choropleth)
-folium.Choropleth(
-    geo_data=local_geojson_path, # Using local file path
-    name="GFSI World Hunger Data",
-    data=gfsi_data,
-    columns=['country_code', 'gfsi_score'],
-    key_on="feature.properties.ISO_A3",
-    fill_color='YlOrRd', # Yellow-Orange-Red for higher scores (worse)
-    fill_opacity=0.7,
-    line_opacity=0.2,
-    legend_name='GFSI Score (Higher = More Hunger)',
-    highlight=True, # Highlight country on hover
-    overlay=True # Essential for layer control
-).add_to(m)
-
-# Layer 2: Technoserve's Presence (Example: color countries with presence)
-folium.Choropleth(
-    geo_data=local_geojson_path, # Using local file path
-    name="Technoserve's Presence",
-    data=technoserve_presence_data,
-    columns=['country_code', 'presence'],
-    key_on="feature.properties.ISO_A3",
-    fill_color='GnBu', # Green-Blue for presence
-    fill_opacity=0.7,
-    line_opacity=0.2,
-    legend_name='Technoserve Presence (1=Yes)',
-    highlight=True,
-    overlay=True, # Essential for layer control
-    show=False # Start with this layer off
-).add_to(m)
-
-# Layer 3: Action Needed (Example: color countries by urgency)
-folium.Choropleth(
-    geo_data=local_geojson_path, # Using local file path
-    name="Action Needed",
-    data=action_needed_data,
-    columns=['country_code', 'action_urgency'],
-    key_on="feature.properties.ISO_A3",
-    fill_color='OrRd', # Orange-Red for urgency
-    fill_opacity=0.7,
-    line_opacity=0.2,
-    legend_name='Action Urgency (Higher = More Urgent)',
-    highlight=True,
-    overlay=True, # Essential for layer control
-    show=False # Start with this layer off
-).add_to(m)
+# Add checkboxes for map selection in the sidebar
+st.sidebar.header("Map Display Options")
+show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map", value=True) # Show by default
+show_technoserve = st.sidebar.checkbox("Show Technoserve's Presence Map")
+show_action_needed = st.sidebar.checkbox("Show Action Needed Map (Verify Code)", help="Please verify this map's embed code if it's different from Technoserve's.")
 
 
-# Add a LayerControl to the map
-# This creates the legend with checkboxes
-folium.LayerControl().add_to(m)
+# Display maps based on checkbox selection
+if show_gfsi:
+    st.markdown("#### GFSI World Hunger Data")
+    # Use the min-height from the embed code as a guide for html height
+    html(map_embed_codes["GFSI World Hunger Data"], height=369)
+    st.markdown("---") # Visual separator
 
-# Display the Folium map in Streamlit
-st_folium(m, width=900, height=500) # Adjust width/height as needed
+if show_technoserve:
+    st.markdown("#### Technoserve's Presence")
+    # Use the updated min-height from the embed code
+    html(map_embed_codes["Technoserve's Presence"], height=357)
+    st.markdown("---") # Visual separator
+
+if show_action_needed:
+    st.markdown("#### Action Needed (Please Verify Embed Code!)")
+    # Using the height from the original 'Action Needed' embed code
+    html(map_embed_codes["Action Needed (Check Code)"], height=555)
+    st.markdown("---") # Visual separator
 
 # --- About Section ---
 st.markdown("---")
 st.subheader("About This Dashboard")
-st.info("This prototype dashboard combines protein index analysis with interactive global food security visualizations. The map data is illustrative placeholders; for a full application, detailed geographical and socio-economic data would be required. The 'Protein Index' is a conceptual metric for this prototype.")
+st.info("This prototype dashboard combines protein index analysis with interactive global food security visualizations. The maps are static embeds for demonstration; for a full application, detailed geographical and socio-economic data would be required. The 'Protein Index' is a conceptual metric for this prototype.")

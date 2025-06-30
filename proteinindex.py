@@ -73,6 +73,7 @@ else:
         help="Download the currently displayed data table."
     )
 
+
 # --- Create and Display Scatter Plot ---
 st.subheader("Protein Index vs. Cost per gram protein")
 st.markdown("This chart visualizes the relationship between protein efficiency and cost. Look for items in the top-left quadrant (high protein index, low cost).")
@@ -126,21 +127,21 @@ st.subheader("Global Food Security Visualizations")
 st.markdown("Select the maps below to view different aspects of global food security and relevant initiatives.")
 
 # Define the HTML embed codes for each map
-# IMPORTANT: I've used the provided codes. Please double-check the 'Action needed' map code
-# as it was identical to 'Technoserve\'s Presence' in your original request.
+# NOTE: The 'Technoserve\'s Presence' and 'Action Needed' maps currently use the same embed code.
+# If 'Action Needed' should be a different map, please provide its unique embed code.
 map_embed_codes = {
     "GFSI World Hunger Data": """
     <div style="min-height:369px; width:100%" id="datawrapper-vis-d0yRp"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/d0yRp/embed.js" charset="utf-8" data-target="#datawrapper-vis-d0yRp"></script><noscript><img src="https://datawrapper.dwcdn.net/d0yRp/full.png" alt="" /></noscript></div>
     """,
     "Technoserve's Presence": """
-    <div style="min-height:330px; width:100%" id="datawrapper-vis-pf5wv"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/pf5wv/embed.js" charset="utf-8" data-target="#datawrapper-vis-pf5wv"></script><noscript><img src="https://datawrapper.dwcdn.net/pf5wv/full.png" alt="" /></noscript></div>
+    <div style="min-height:357px; width:100%" id="datawrapper-vis-pf5wv"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/pf5wv/embed.js" charset="utf-8" data-target="#datawrapper-vis-pf5wv"></script><noscript><img src="https://datawrapper.dwcdn.net/pf5wv/full.png" alt="" /></noscript></div>
     """,
     "Action Needed (Check Code)": """
     <div style="min-height:555px; width:100%" id="datawrapper-vis-pf5wv"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/pf5wv/embed.js" charset="utf-8" data-target="#datawrapper-vis-pf5wv"></script><noscript><img src="https://datawrapper.dwcdn.net/pf5wv/full.png" alt="" /></noscript></div>
     """
 }
 
-# Add checkboxes for map selection
+# Add checkboxes for map selection in the sidebar
 st.sidebar.header("Map Options")
 show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map", value=True)
 show_technoserve = st.sidebar.checkbox("Show Technoserve's Presence Map")
@@ -150,18 +151,21 @@ show_action_needed = st.sidebar.checkbox("Show Action Needed Map (Verify Code)",
 # Display maps based on checkbox selection
 if show_gfsi:
     st.markdown("#### GFSI World Hunger Data")
-    html(map_embed_codes["GFSI World Hunger Data"], height=369) # Use the min-height as a guide for html height
-    st.markdown("---")
+    # Use the min-height from the embed code as a guide for html height
+    html(map_embed_codes["GFSI World Hunger Data"], height=369)
+    st.markdown("---") # Visual separator
 
 if show_technoserve:
     st.markdown("#### Technoserve's Presence")
-    html(map_embed_codes["Technoserve's Presence"], height=330)
-    st.markdown("---")
+    # Use the updated min-height from the embed code
+    html(map_embed_codes["Technoserve's Presence"], height=357)
+    st.markdown("---") # Visual separator
 
 if show_action_needed:
     st.markdown("#### Action Needed (Please Verify Embed Code!)")
+    # Using the height from the original 'Action Needed' embed code
     html(map_embed_codes["Action Needed (Check Code)"], height=555)
-    st.markdown("---")
+    st.markdown("---") # Visual separator
 
 # --- About Section ---
 st.markdown("---")

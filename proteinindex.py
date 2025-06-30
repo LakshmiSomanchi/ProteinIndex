@@ -1,4 +1,4 @@
-# app.py
+# proteinindex.py (or app.py)
 
 import streamlit as st
 import pandas as pd
@@ -16,10 +16,7 @@ data = pd.DataFrame({
 })
 
 # --- Placeholder Data for Maps (YOU NEED TO REPLACE THIS WITH YOUR REAL DATA) ---
-# For a real application, you would load this from CSV, API, etc.
 # Assume ISO-alpha3 country codes for joining with GeoJSON
-world_countries_geojson_url = "https://raw.githubusercontent.com/python-visualization/folium-example-data/main/countries_110m.geojson"
-
 # Placeholder GFSI data (replace with your actual data and values)
 # Example: Higher value means worse food security
 gfsi_data = pd.DataFrame({
@@ -40,6 +37,10 @@ action_needed_data = pd.DataFrame({
     'country_code': ['IND', 'NGA', 'ETH', 'COD', 'SDN'], # Example countries
     'action_urgency': [3, 4, 3, 5, 5]
 })
+
+# --- Local GeoJSON File Path ---
+# IMPORTANT: Ensure 'countries_110m.geojson' is in the same directory as this script.
+local_geojson_path = "countries_110m.geojson"
 
 # --- Streamlit Page Configuration ---
 st.set_page_config(layout="wide", page_title="Protein Index & Food Security Dashboard")
@@ -101,6 +102,7 @@ else:
         help="Download the currently displayed data table."
     )
 
+
 # --- Create and Display Scatter Plot ---
 st.subheader("Protein Index vs. Cost per gram protein")
 st.markdown("This chart visualizes the relationship between protein efficiency and cost. Look for items in the top-left quadrant (high protein index, low cost).")
@@ -157,10 +159,8 @@ st.markdown("Use the layer control icon (top right of the map) to toggle differe
 m = folium.Map(location=[20, 0], zoom_start=2, tiles="cartodbpositron") # Centered near equator, world view
 
 # Layer 1: GFSI World Hunger Data (Choropleth)
-# Merge GFSI data with a dummy GeoDataFrame if you had one, or pass data directly
-# This assumes 'country_code' in gfsi_data matches 'ISO_A3' in the GeoJSON properties
 folium.Choropleth(
-    geo_data=world_countries_geojson_url,
+    geo_data=local_geojson_path, # Using local file path
     name="GFSI World Hunger Data",
     data=gfsi_data,
     columns=['country_code', 'gfsi_score'],
@@ -174,11 +174,8 @@ folium.Choropleth(
 ).add_to(m)
 
 # Layer 2: Technoserve's Presence (Example: color countries with presence)
-# For simplicity, let's just highlight countries with presence.
-# In a real scenario, if Technoserve has specific project areas (not whole countries),
-# you might use Markers, Circles, or GeoJson for those specific areas.
 folium.Choropleth(
-    geo_data=world_countries_geojson_url,
+    geo_data=local_geojson_path, # Using local file path
     name="Technoserve's Presence",
     data=technoserve_presence_data,
     columns=['country_code', 'presence'],
@@ -192,10 +189,9 @@ folium.Choropleth(
     show=False # Start with this layer off
 ).add_to(m)
 
-
 # Layer 3: Action Needed (Example: color countries by urgency)
 folium.Choropleth(
-    geo_data=world_countries_geojson_url,
+    geo_data=local_geojson_path, # Using local file path
     name="Action Needed",
     data=action_needed_data,
     columns=['country_code', 'action_urgency'],

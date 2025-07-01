@@ -5,9 +5,6 @@ import pandas as pd
 import plotly.express as px
 from streamlit.components.v1 import html # Import html component for embedding
 
-# Removed import json as it's no longer needed for metadata
-# Removed hardcoded GRFC data DataFrames
-
 # --- Sample Data (from your original dashboard) ---
 data = pd.DataFrame({
     'Food': ['Lentils', 'Chicken', 'Soy', 'Milk', 'Egg', 'Fish', 'Beef', 'Quinoa'],
@@ -214,11 +211,9 @@ for i, tab in enumerate(tabs):
     elif tab_names[i] == "Global Maps":
         with tab:
             st.header("Global Food Security Visualizations")
-            st.markdown("Select the maps below to view different aspects of global food security and relevant initiatives.")
+            st.markdown("Choose a map below to view different aspects of global food security and relevant initiatives.")
 
-            # Removed the entire "Interactive GRFC Maps with Data" section
-
-            # Define the HTML embed codes for existing static maps + the new one
+            # Define the HTML embed codes for all static maps
             map_embed_codes = {
                 "Global Hunger Index Map": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
@@ -230,43 +225,36 @@ for i, tab in enumerate(tabs):
                 <iframe title="TechnoServe's Presence in Food Insecure Regions" aria-label="Map" id="datawrapper-chart-pf5wv" src="https://datawrapper.dwcdn.net/pf5wv/4/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="800" data-external="1"></iframe><script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}}))}();
                 </script>
                 """,
-                # New map added here
                 "Average Annual Population Growth Rate": """
                 <div style="min-height:321px; width:100%" id="datawrapper-vis-w7M9B"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/w7M9B/embed.js" charset="utf-8" data-target="#datawrapper-vis-w7M9B"></script><noscript><img src="https://datawrapper.dwcdn.net/w7M9B/full.png" alt="" /></noscript></div>
                 """
             }
-
-            # Add checkboxes for map selection in the sidebar (or directly in the tab if preferred)
-            st.sidebar.header("Map Display Options")
-            show_ghi = st.sidebar.checkbox("Show Global Hunger Index Map", value=True)
-            show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map")
-            show_technoserve_new = st.sidebar.checkbox("Show TechnoServe's Presence in Food Insecure Regions Map")
-            # New checkbox for the added map
-            show_population_growth_map = st.sidebar.checkbox("Show Average Annual Population Growth Rate Map")
-
-
-            # Display maps based on checkbox selection
-            if show_ghi:
-                st.markdown("#### Global Hunger Index Map")
-                html(map_embed_codes["Global Hunger Index Map"], height=800, scrolling=True)
-                st.markdown("---")
-
-            if show_gfsi:
-                st.markdown("#### GFSI World Hunger Data")
-                html(map_embed_codes["GFSI World Hunger Data"], height=800, scrolling=True)
-                st.markdown("---")
             
-            if show_technoserve_new:
-                st.markdown("#### TechnoServe's Presence in Food Insecure Regions")
-                html(map_embed_codes["TechnoServe's Presence in Food Insecure Regions"], height=800, scrolling=True)
-                st.markdown("---")
+            # Get the list of map titles from the dictionary keys
+            map_titles = list(map_embed_codes.keys())
 
-            # Display the new map
-            if show_population_growth_map:
-                st.markdown("#### Major Reasons for Food Insecurity")
-                # Using the height specified in the embed code, or adjust as needed for scrollability
-                html(map_embed_codes["Average Annual Population Growth Rate"], height=321, scrolling=True)
+            # Use st.radio for single selection of maps
+            selected_map_title = st.radio(
+                "Select a Map to Display:",
+                options=map_titles,
+                index=0, # Default to the first map (Global Hunger Index Map)
+                key="map_selector"
+            )
+
+            # Display the selected map
+            if selected_map_title:
+                st.markdown(f"#### {selected_map_title}")
+                # Retrieve the embed code for the selected map
+                embed_code = map_embed_codes[selected_map_title]
+                
+                # Extract height from embed code or set a default/larger one for scrollability
+                # The height in the embed code might be 'min-height' from div or 'height' from iframe
+                # Let's try to parse it or use a default large scrollable height.
+                # For simplicity, we'll enforce a consistent height and scrolling=True
+                html(embed_code, height=800, scrolling=True)
                 st.markdown("---")
+            else:
+                st.info("Please select a map to display.")
 
     elif tab_names[i] in dynamic_dfs:
         with tab:

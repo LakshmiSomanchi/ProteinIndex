@@ -214,11 +214,13 @@ with tabs[1]:
 
     # Define the HTML embed codes for each map
     map_embed_codes = {
-        "Global Hunger Index Map": """
-        <div style="min-height:400px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
+        # GHI Score Map - Made taller and scrollable
+        "GHI Score Map": """
+        <div style="min-height:800px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
         """,
+        # GFSI World Hunger Data - Made taller and scrollable
         "GFSI World Hunger Data": """
-        <div style="min-height:369px; width:100%" id="datawrapper-vis-d0yRp"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/d0yRp/embed.js" charset="utf-8" data-target="#datawrapper-vis-d0yRp"></script><noscript><img src="https://datawrapper.dwcdn.net/d0yRp/full.png" alt="" /></noscript></div>
+        <div style="min-height:800px; width:100%" id="datawrapper-vis-d0yRp"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/d0yRp/embed.js" charset="utf-8" data-target="#datawrapper-vis-d0yRp"></script><noscript><img src="https://datawrapper.dwcdn.net/d0yRp/full.png" alt="" /></noscript></div>
         """,
         "Technoserve's Presence": """
         <div style="min-height:357px; width:100%" id="datawrapper-vis-pf5wv"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/pf5wv/embed.js" charset="utf-8" data-target="#datawrapper-vis-pf5wv"></script><noscript><img src="https://datawrapper.dwcdn.net/pf5wv/full.png" alt="" /></noscript></div>
@@ -230,21 +232,20 @@ with tabs[1]:
 
     # Add checkboxes for map selection in the sidebar (or directly in the tab if preferred)
     st.sidebar.header("Map Display Options")
-    show_ghi = st.sidebar.checkbox("Show Global Hunger Index Map", value=True)
+    show_ghi = st.sidebar.checkbox("Show GHI Score Map", value=True) # Changed label here
     show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map")
     show_technoserve = st.sidebar.checkbox("Show Technoserve's Presence Map")
     show_action_needed = st.sidebar.checkbox("Show Action Needed Map (Verify Code)", help="Please verify this map's embed code if it's different from Technoserve's.")
 
     # Display maps based on checkbox selection
     if show_ghi:
-        st.markdown("#### Global Hunger Index Map")
-        # Increased height for better visibility
-        html(map_embed_codes["Global Hunger Index Map"], height=400)
+        st.markdown("#### GHI Score Map") # Changed title here
+        html(map_embed_codes["GHI Score Map"], height=800, scrolling=True) # Height increased, scrolling enabled
         st.markdown("---")
 
     if show_gfsi:
         st.markdown("#### GFSI World Hunger Data")
-        html(map_embed_codes["GFSI World Hunger Data"], height=369)
+        html(map_embed_codes["GFSI World Hunger Data"], height=800, scrolling=True) # Height increased, scrolling enabled
         st.markdown("---")
 
     if show_technoserve:

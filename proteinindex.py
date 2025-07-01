@@ -225,8 +225,9 @@ for i, tab in enumerate(tabs):
                 <iframe title="TechnoServe's Presence in Food Insecure Regions" aria-label="Map" id="datawrapper-chart-pf5wv" src="https://datawrapper.dwcdn.net/pf5wv/4/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="800" data-external="1"></iframe><script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}}))}();
                 </script>
                 """,
+                # Fixed: Changed min-height to 800px for full display
                 "Average Annual Population Growth Rate": """
-                <div style="min-height:321px; width:100%" id="datawrapper-vis-w7M9B"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/w7M9B/embed.js" charset="utf-8" data-target="#datawrapper-vis-w7M9B"></script><noscript><img src="https://datawrapper.dwcdn.net/w7M9B/full.png" alt="" /></noscript></div>
+                <div style="min-height:800px; width:100%" id="datawrapper-vis-w7M9B"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/w7M9B/embed.js" charset="utf-8" data-target="#datawrapper-vis-w7M9B"></script><noscript><img src="https://datawrapper.dwcdn.net/w7M9B/full.png" alt="" /></noscript></div>
                 """
             }
             
@@ -247,10 +248,10 @@ for i, tab in enumerate(tabs):
                 # Retrieve the embed code for the selected map
                 embed_code = map_embed_codes[selected_map_title]
                 
-                # Extract height from embed code or set a default/larger one for scrollability
-                # The height in the embed code might be 'min-height' from div or 'height' from iframe
-                # Let's try to parse it or use a default large scrollable height.
-                # For simplicity, we'll enforce a consistent height and scrolling=True
+                # Enforce a consistent height and scrolling=True
+                # The height parameter here tells the Streamlit iframe how tall to be.
+                # The min-height in the HTML embed code tells the DataWrapper content
+                # how much space it should *at least* try to take.
                 html(embed_code, height=800, scrolling=True)
                 st.markdown("---")
             else:

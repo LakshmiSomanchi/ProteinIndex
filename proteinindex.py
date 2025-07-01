@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from streamlit.components.v1 import html # Import html component for embedding
+import json # Import json library to load the JSON file
 
 # --- Sample Data (from your original dashboard) ---
 data = pd.DataFrame({
@@ -98,6 +99,8 @@ st.title("Protein Index & Global Food Security Dashboard")
 st.markdown("A comprehensive dashboard for protein analysis, global food security visualizations, and detailed data insights.")
 
 # --- Define the tabs ---
+# Add a new tab for GRFC Data if you want to separate the metadata
+# For now, I'll put it within Global Maps
 tab_names = ["Protein Dashboard", "Global Maps"] + list(dynamic_dfs.keys())
 tabs = st.tabs(tab_names)
 
@@ -213,8 +216,50 @@ for i, tab in enumerate(tabs):
             st.header("Global Food Security Visualizations")
             st.markdown("Select the maps below to view different aspects of global food security and relevant initiatives.")
 
-            # Define the HTML embed codes for each map
-            # Removed "Technoserve (Original)" and "Action Needed (Check Code)" maps
+            # --- GRFC Database Metadata Display ---
+            st.subheader("Global Report on Food Crises (GRFC) Database Metadata")
+            try:
+                with open("FSIN_GRFC.json", "r") as f:
+                    grfc_metadata = json.load(f)
+                
+                # Display key metadata details
+                st.write(f"**Title:** {grfc_metadata['database_description']['title_statement']['title']}")
+                st.write(f"**ID:** {grfc_metadata['database_description']['title_statement']['idno']}")
+                st.write(f"**Abstract:** {grfc_metadata['database_description']['abstract']}")
+                st.write(f"**Citation:** {grfc_metadata['database_description']['citation']}")
+                st.write(f"**Source URL:** {grfc_metadata['database_description']['url']}")
+                st.write(f"**Time Coverage:** {grfc_metadata['database_description']['time_coverage'][0]['start']} - {grfc_metadata['database_description']['time_coverage'][0]['end']}")
+                
+                # Link to the full dataset if available
+                if 'links' in grfc_metadata['database_description'] and grfc_metadata['database_description']['links']:
+                    st.markdown(f"**Full Dataset Link:** [Humanitarian Data Exchange]({grfc_metadata['database_description']['links'][0]['uri']})")
+                
+                st.markdown("---")
+                st.info("The JSON file provides metadata about the GRFC database. To create interactive maps with filters (like 'Undernourishment' and 'Food Insecurity') and a time slider, we need the actual time-series data, typically available as CSV or Excel files from the source links mentioned above.")
+                st.markdown("---")
+
+            except FileNotFoundError:
+                st.error("`FSIN_GRFC.json` not found. Please ensure it's in the same directory as this script.")
+            except json.JSONDecodeError:
+                st.error("Error decoding `FSIN_GRFC.json`. Please check if it's a valid JSON file.")
+            except KeyError as e:
+                st.error(f"Missing expected key in `FSIN_GRFC.json`: {e}. The JSON structure might have changed.")
+
+            # Placeholder for interactive GRFC maps with data
+            st.subheader("Interactive GRFC Maps (Requires Raw Data)")
+            st.markdown("Once the raw time-series data for food insecurity and undernourishment is available, interactive maps with filters and a time slider will appear here.")
+
+            # You would load your actual data here once you have it
+            # try:
+            #     grfc_data_df = pd.read_csv("path/to/your_grfc_data.csv")
+            #     # Further processing and map generation using Plotly Express
+            # except FileNotFoundError:
+            #     st.warning("Raw GRFC data file not found. Please upload or specify path.")
+
+            st.markdown("---")
+
+
+            # Define the HTML embed codes for existing maps
             map_embed_codes = {
                 "GHI Score Map": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
@@ -229,10 +274,9 @@ for i, tab in enumerate(tabs):
             }
 
             # Add checkboxes for map selection in the sidebar (or directly in the tab if preferred)
-            st.sidebar.header("Map Display Options")
+            st.sidebar.header("Existing Map Display Options") # Renamed header
             show_ghi = st.sidebar.checkbox("Show GHI Score Map", value=True)
             show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map")
-            # Only keeping the new TechnoServe map checkbox
             show_technoserve_new = st.sidebar.checkbox("Show TechnoServe's Presence in Food Insecure Regions Map")
 
             # Display maps based on checkbox selection
@@ -246,7 +290,6 @@ for i, tab in enumerate(tabs):
                 html(map_embed_codes["GFSI World Hunger Data"], height=800, scrolling=True)
                 st.markdown("---")
             
-            # Display the new TechnoServe map
             if show_technoserve_new:
                 st.markdown("#### TechnoServe's Presence in Food Insecure Regions")
                 html(map_embed_codes["TechnoServe's Presence in Food Insecure Regions"], height=800, scrolling=True)

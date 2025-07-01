@@ -27,7 +27,7 @@ df_indicators = pd.DataFrame({
     'Sub-Indicators / Metrics': [
         'Daily intake (g/day/person), % of population...',
         'National supply, Food loss...',
-        '\% households with access...'
+        '% households with access...'
     ]
 })
 
@@ -189,6 +189,14 @@ for i, tab in enumerate(tabs):
                     hovermode="closest"
                 )
                 st.plotly_chart(fig, use_container_width=True)
+
+            # --- ADDED: Datawrapper Embed for Protein Dashboard ---
+            st.subheader("Additional Protein Data Visualization")
+            datawrapper_embed_code = """
+            <div style="min-height:558px" id="datawrapper-vis-vYiZd"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/vYiZd/embed.js" charset="utf-8" data-target="#datawrapper-vis-vYiZd"></script><noscript><img src="https://datawrapper.dwcdn.net/vYiZd/full.png" alt="" /></noscript></div>
+            """
+            html(datawrapper_embed_code, height=580) # Adjust height as needed for proper display
+            # --- END ADDITION ---
 
             # --- Dashboard Insights and Summary ---
             st.subheader("Key Insights")

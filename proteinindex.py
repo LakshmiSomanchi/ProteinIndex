@@ -226,7 +226,7 @@ for i, tab in enumerate(tabs):
                 </script>
                 """,
                 # Fixed: Changed min-height to 800px for full display
-                "Average Annual Population Growth Rate": """
+                "Reasons for Food Insecurity": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-w7M9B"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/w7M9B/embed.js" charset="utf-8" data-target="#datawrapper-vis-w7M9B"></script><noscript><img src="https://datawrapper.dwcdn.net/w7M9B/full.png" alt="" /></noscript></div>
                 """
             }

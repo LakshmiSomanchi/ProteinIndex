@@ -263,7 +263,7 @@ for i, tab in enumerate(tabs):
 
             # Display the new map
             if show_population_growth_map:
-                st.markdown("#### Average Annual Population Growth Rate")
+                st.markdown("#### Major Reasons for Food Insecurity")
                 # Using the height specified in the embed code, or adjust as needed for scrollability
                 html(map_embed_codes["Average Annual Population Growth Rate"], height=321, scrolling=True)
                 st.markdown("---")

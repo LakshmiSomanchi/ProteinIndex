@@ -189,7 +189,6 @@ for i, tab in enumerate(tabs):
                     hovermode="closest"
                 )
                 st.plotly_chart(fig, use_container_width=True)
-                <div style="min-height:396px" id="datawrapper-vis-jnLdP"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/jnLdP/embed.js" charset="utf-8" data-target="#datawrapper-vis-jnLdP"></script><noscript><img src="https://datawrapper.dwcdn.net/jnLdP/full.png" alt="" /></noscript></div>
 
             # --- Dashboard Insights and Summary ---
             st.subheader("Key Insights")

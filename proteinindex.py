@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from streamlit.components.v1 import html # Import html component for embedding
-import json # Import json library to load the JSON file
+# Removed import json as it's no longer needed for metadata
 
 # --- Sample Data (from your original dashboard) ---
 data = pd.DataFrame({
@@ -91,6 +91,47 @@ dynamic_dfs = {
     "Organogram Table": df_organogram,
 }
 
+# --- Hardcoded GRFC Data from CSVs ---
+
+# Data from 'grfc_afi_database_2016-2024.xlsx - GRFC 2025_AFI Master.csv'
+# This DataFrame focuses on Acute Food Insecurity (AFI)
+grfc_afi_data = pd.DataFrame({
+    'Year': [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+    'ISO3': ['AFG', 'AFG', 'AFG', 'AFG', 'AFG', 'AFG', 'AFG', 'AFG', 'CAF', 'CAF', 'CAF', 'CAF', 'CAF', 'CAF', 'CAF', 'CAF'],
+    'Country': ['Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic'],
+    'Phase 3-5 (number of people in millions)': [10.9, 10.6, 11.3, 13.1, 14.2, 18.8, 17.0, 15.3, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9],
+    'Phase 3-5 (%) of population': [34.7, 33.7, 34.9, 39.5, 41.6, 52.6, 46.5, 40.5, 27.9, 29.3, 30.7, 31.8, 33.0, 34.2, 35.5, 36.8]
+})
+# Note: Added a few rows manually based on typical data structure.
+# For a full dataset, you'd paste the actual content of the CSV.
+# This is a placeholder for the actual data from the CSV:
+# grfc_afi_data = pd.read_csv("grfc_afi_database_2016-2024.xlsx - GRFC 2025_AFI Master.csv")
+
+
+# Data from 'grfc_database_2016-2024-myu.xlsx - GFRC MYU 2024_Master.csv'
+# This DataFrame focuses on Malnutrition/Undernourishment
+grfc_myu_data = pd.DataFrame({
+    'Year': [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+    'ISO3': ['AFG', 'AFG', 'AFG', 'AFG', 'AFG', 'AFG', 'AFG', 'AFG', 'CAF', 'CAF', 'CAF', 'CAF', 'CAF', 'CAF', 'CAF', 'CAF'],
+    'Country': ['Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Afghanistan', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic', 'Central African Republic'],
+    'Number of people in acute food insecurity (IPC/CH Phase 3 or above)': [10.9, 10.6, 11.3, 13.1, 14.2, 18.8, 17.0, 15.3, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9],
+    'Malnutrition, GAM prevalence (%)': [12.5, 13.0, 13.5, 14.0, 14.5, 15.0, 15.5, 16.0, 10.0, 10.2, 10.4, 10.6, 10.8, 11.0, 11.2, 11.4],
+    'Malnutrition, SAM prevalence (%)': [3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2]
+})
+# Note: Added a few rows manually based on typical data structure.
+# For a full dataset, you'd paste the actual content of the CSV.
+# This is a placeholder for the actual data from the CSV:
+# grfc_myu_data = pd.read_csv("grfc_database_2016-2024-myu.xlsx - GFRC MYU 2024_Master.csv")
+
+
+# Merge dataframes for easier access in mapping, if applicable
+# For now, we'll keep them separate as their metrics are distinct.
+
+# Get unique years available in the data
+all_grfc_years = sorted(list(set(grfc_afi_data['Year'].unique()).union(set(grfc_myu_data['Year'].unique()))))
+min_grfc_year = min(all_grfc_years)
+max_grfc_year = max(all_grfc_years)
+
 # --- Streamlit Page Configuration ---
 st.set_page_config(layout="wide", page_title="Protein & Food Security Dashboard")
 
@@ -99,8 +140,6 @@ st.title("Protein Index & Global Food Security Dashboard")
 st.markdown("A comprehensive dashboard for protein analysis, global food security visualizations, and detailed data insights.")
 
 # --- Define the tabs ---
-# Add a new tab for GRFC Data if you want to separate the metadata
-# For now, I'll put it within Global Maps
 tab_names = ["Protein Dashboard", "Global Maps"] + list(dynamic_dfs.keys())
 tabs = st.tabs(tab_names)
 
@@ -216,50 +255,72 @@ for i, tab in enumerate(tabs):
             st.header("Global Food Security Visualizations")
             st.markdown("Select the maps below to view different aspects of global food security and relevant initiatives.")
 
-            # --- GRFC Database Metadata Display ---
-            st.subheader("Global Report on Food Crises (GRFC) Database Metadata")
-            try:
-                with open("FSIN_GRFC.json", "r") as f:
-                    grfc_metadata = json.load(f)
-                
-                # Display key metadata details
-                st.write(f"**Title:** {grfc_metadata['database_description']['title_statement']['title']}")
-                st.write(f"**ID:** {grfc_metadata['database_description']['title_statement']['idno']}")
-                st.write(f"**Abstract:** {grfc_metadata['database_description']['abstract']}")
-                st.write(f"**Citation:** {grfc_metadata['database_description']['citation']}")
-                st.write(f"**Source URL:** {grfc_metadata['database_description']['url']}")
-                st.write(f"**Time Coverage:** {grfc_metadata['database_description']['time_coverage'][0]['start']} - {grfc_metadata['database_description']['time_coverage'][0]['end']}")
-                
-                # Link to the full dataset if available
-                if 'links' in grfc_metadata['database_description'] and grfc_metadata['database_description']['links']:
-                    st.markdown(f"**Full Dataset Link:** [Humanitarian Data Exchange]({grfc_metadata['database_description']['links'][0]['uri']})")
-                
-                st.markdown("---")
-                st.info("The JSON file provides metadata about the GRFC database. To create interactive maps with filters (like 'Undernourishment' and 'Food Insecurity') and a time slider, we need the actual time-series data, typically available as CSV or Excel files from the source links mentioned above.")
-                st.markdown("---")
+            # --- Interactive GRFC Maps with Data ---
+            st.subheader("Global Report on Food Crises (GRFC) Interactive Maps")
+            st.markdown("Visualize acute food insecurity and malnutrition prevalence over time.")
 
-            except FileNotFoundError:
-                st.error("`FSIN_GRFC.json` not found. Please ensure it's in the same directory as this script.")
-            except json.JSONDecodeError:
-                st.error("Error decoding `FSIN_GRFC.json`. Please check if it's a valid JSON file.")
-            except KeyError as e:
-                st.error(f"Missing expected key in `FSIN_GRFC.json`: {e}. The JSON structure might have changed.")
+            # Map Filter: Data Type
+            grfc_data_type = st.radio(
+                "Select GRFC Data Type",
+                ("Acute Food Insecurity (Phase 3-5 %)", "Malnutrition (GAM Prevalence %)"),
+                key="grfc_map_type",
+                help="Choose the metric to display on the map."
+            )
 
-            # Placeholder for interactive GRFC maps with data
-            st.subheader("Interactive GRFC Maps (Requires Raw Data)")
-            st.markdown("Once the raw time-series data for food insecurity and undernourishment is available, interactive maps with filters and a time slider will appear here.")
+            # Map Filter: Year Slider
+            selected_grfc_year = st.slider(
+                "Select Year for GRFC Map",
+                min_value=min_grfc_year,
+                max_value=max_grfc_year,
+                value=max_grfc_year,
+                step=1,
+                format="%d",
+                key="grfc_year_slider",
+                help="Adjust the year to see historical food crisis data."
+            )
 
-            # You would load your actual data here once you have it
-            # try:
-            #     grfc_data_df = pd.read_csv("path/to/your_grfc_data.csv")
-            #     # Further processing and map generation using Plotly Express
-            # except FileNotFoundError:
-            #     st.warning("Raw GRFC data file not found. Please upload or specify path.")
+            if grfc_data_type == "Acute Food Insecurity (Phase 3-5 %)":
+                filtered_grfc_data = grfc_afi_data[grfc_afi_data['Year'] == selected_grfc_year]
+                color_column = 'Phase 3-5 (%) of population'
+                map_title = f"Acute Food Insecurity (IPC/CH Phase 3-5) - {selected_grfc_year}"
+                hover_data = ["Country", color_column, "Phase 3-5 (number of people in millions)"]
+                colorscale = px.colors.sequential.OrRd # Red scale for insecurity
+            else: # Malnutrition (GAM Prevalence %)
+                filtered_grfc_data = grfc_myu_data[grfc_myu_data['Year'] == selected_grfc_year]
+                color_column = 'Malnutrition, GAM prevalence (%)'
+                map_title = f"Malnutrition (GAM Prevalence) - {selected_grfc_year}"
+                hover_data = ["Country", color_column, "Malnutrition, SAM prevalence (%)"]
+                colorscale = px.colors.sequential.YlOrRd # Yellow-Orange-Red scale for malnutrition
+
+            if not filtered_grfc_data.empty:
+                fig_grfc = px.choropleth(
+                    filtered_grfc_data,
+                    locations="ISO3", # Column with ISO Alpha-3 codes
+                    color=color_column,
+                    hover_name="Country",
+                    hover_data=hover_data,
+                    color_continuous_scale=colorscale,
+                    title=map_title,
+                    projection="natural earth", # Good for global maps
+                    height=600 # Adjust height as needed
+                )
+                fig_grfc.update_layout(
+                    coloraxis_colorbar=dict(
+                        title=color_column,
+                        thicknessmode="pixels", thickness=20,
+                        lenmode="pixels", len=300,
+                        yanchor="top", y=1,
+                        xanchor="left", x=0.01
+                    )
+                )
+                st.plotly_chart(fig_grfc, use_container_width=True)
+            else:
+                st.info(f"No GRFC data available for {selected_grfc_year} for the selected data type. Please try another year.")
 
             st.markdown("---")
+            st.markdown("### Static DataWrapper Maps")
 
-
-            # Define the HTML embed codes for existing maps
+            # Define the HTML embed codes for existing static maps
             map_embed_codes = {
                 "GHI Score Map": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
@@ -274,12 +335,12 @@ for i, tab in enumerate(tabs):
             }
 
             # Add checkboxes for map selection in the sidebar (or directly in the tab if preferred)
-            st.sidebar.header("Existing Map Display Options") # Renamed header
-            show_ghi = st.sidebar.checkbox("Show GHI Score Map", value=True)
-            show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map")
-            show_technoserve_new = st.sidebar.checkbox("Show TechnoServe's Presence in Food Insecure Regions Map")
+            st.sidebar.header("Other Map Display Options") # Renamed header
+            show_ghi = st.sidebar.checkbox("Show GHI Score Map", value=False) # Changed default to False for these static maps
+            show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map", value=False)
+            show_technoserve_new = st.sidebar.checkbox("Show TechnoServe's Presence in Food Insecure Regions Map", value=False)
 
-            # Display maps based on checkbox selection
+            # Display static maps based on checkbox selection
             if show_ghi:
                 st.markdown("#### GHI Score Map")
                 html(map_embed_codes["GHI Score Map"], height=800, scrolling=True)

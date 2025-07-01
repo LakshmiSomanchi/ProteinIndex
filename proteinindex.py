@@ -216,6 +216,9 @@ with tabs[1]:
     # NOTE: The 'Technoserve\'s Presence' and 'Action Needed' maps currently use the same embed code.
     # If 'Action Needed' should be a different map, please provide its unique embed code.
     map_embed_codes = {
+        "Global Hunger Index Map": """
+        <div style="min-height:369px" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
+        """,
         "GFSI World Hunger Data": """
         <div style="min-height:369px; width:100%" id="datawrapper-vis-d0yRp"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/d0yRp/embed.js" charset="utf-8" data-target="#datawrapper-vis-d0yRp"></script><noscript><img src="https://datawrapper.dwcdn.net/d0yRp/full.png" alt="" /></noscript></div>
         """,
@@ -229,11 +232,17 @@ with tabs[1]:
 
     # Add checkboxes for map selection in the sidebar (or directly in the tab if preferred)
     st.sidebar.header("Map Display Options") # This will appear in the sidebar regardless of selected tab
-    show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map", value=True)
+    show_ghi = st.sidebar.checkbox("Show Global Hunger Index Map", value=True) # New checkbox for your map
+    show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map")
     show_technoserve = st.sidebar.checkbox("Show Technoserve's Presence Map")
     show_action_needed = st.sidebar.checkbox("Show Action Needed Map (Verify Code)", help="Please verify this map's embed code if it's different from Technoserve's.")
 
     # Display maps based on checkbox selection
+    if show_ghi:
+        st.markdown("#### Global Hunger Index Map")
+        html(map_embed_codes["Global Hunger Index Map"], height=369)
+        st.markdown("---")
+
     if show_gfsi:
         st.markdown("#### GFSI World Hunger Data")
         html(map_embed_codes["GFSI World Hunger Data"], height=369)
@@ -242,11 +251,6 @@ with tabs[1]:
     if show_technoserve:
         st.markdown("#### Technoserve's Presence")
         html(map_embed_codes["Technoserve's Presence"], height=357)
-        st.markdown("---")
-
-    if show_action_needed:
-        st.markdown("#### Action Needed (Please Verify Embed Code!)")
-        html(map_embed_codes["Action Needed (Check Code)"], height=555)
         st.markdown("---")
 
 # --- Content for Dynamically Added DataFrames ---

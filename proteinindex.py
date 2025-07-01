@@ -102,7 +102,6 @@ tab_names = ["Protein Dashboard", "Global Maps"] + list(dynamic_dfs.keys())
 tabs = st.tabs(tab_names)
 
 # --- Content for Each Tab ---
-# Use enumerate to get both the index and the tab object
 for i, tab in enumerate(tabs):
     if tab_names[i] == "Protein Dashboard":
         with tab:
@@ -216,15 +215,21 @@ for i, tab in enumerate(tabs):
 
             # Define the HTML embed codes for each map
             map_embed_codes = {
-                # GHI Score Map - Made taller and scrollable
                 "GHI Score Map": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
                 """,
-                # GFSI World Hunger Data - Made taller and scrollable
                 "GFSI World Hunger Data": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-d0yRp"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/d0yRp/embed.js" charset="utf-8" data-target="#datawrapper-vis-d0yRp"></script><noscript><img src="https://datawrapper.dwcdn.net/d0yRp/full.png" alt="" /></noscript></div>
                 """,
-                "Technoserve's Presence": """
+                # New TechnoServe Map added here
+                "TechnoServe's Presence in Food Insecure Regions": """
+                <iframe title="TechnoServe's Presence in Food Insecure Regions" aria-label="Map" id="datawrapper-chart-pf5wv" src="https://datawrapper.dwcdn.net/pf5wv/4/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="800" data-external="1"></iframe><script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}}))}();
+                </script>
+                """,
+                # Re-using the old "Technoserve's Presence" for the previous checkbox if it's a different map
+                # If "Technoserve's Presence" and "TechnoServe's Presence in Food Insecure Regions" are the same map,
+                # you might want to remove one or rename the key.
+                "Technoserve (Original)": """
                 <div style="min-height:357px; width:100%" id="datawrapper-vis-pf5wv"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/pf5wv/embed.js" charset="utf-8" data-target="#datawrapper-vis-pf5wv"></script><noscript><img src="https://datawrapper.dwcdn.net/pf5wv/full.png" alt="" /></noscript></div>
                 """,
                 "Action Needed (Check Code)": """
@@ -234,33 +239,44 @@ for i, tab in enumerate(tabs):
 
             # Add checkboxes for map selection in the sidebar (or directly in the tab if preferred)
             st.sidebar.header("Map Display Options")
-            show_ghi = st.sidebar.checkbox("Show GHI Score Map", value=True) # Changed label here
+            show_ghi = st.sidebar.checkbox("Show GHI Score Map", value=True)
             show_gfsi = st.sidebar.checkbox("Show GFSI World Hunger Data Map")
-            show_technoserve = st.sidebar.checkbox("Show Technoserve's Presence Map")
+            # New checkbox for the new map
+            show_technoserve_new = st.sidebar.checkbox("Show TechnoServe's Presence in Food Insecure Regions Map")
+            # The old Technoserve checkbox - decide if you need both
+            show_technoserve_original = st.sidebar.checkbox("Show Technoserve (Original) Map")
             show_action_needed = st.sidebar.checkbox("Show Action Needed Map (Verify Code)", help="Please verify this map's embed code if it's different from Technoserve's.")
 
             # Display maps based on checkbox selection
             if show_ghi:
-                st.markdown("#### GHI Score Map") # Changed title here
-                html(map_embed_codes["GHI Score Map"], height=800, scrolling=True) # Height increased, scrolling enabled
+                st.markdown("#### GHI Score Map")
+                html(map_embed_codes["GHI Score Map"], height=800, scrolling=True)
                 st.markdown("---")
 
             if show_gfsi:
                 st.markdown("#### GFSI World Hunger Data")
-                html(map_embed_codes["GFSI World Hunger Data"], height=800, scrolling=True) # Height increased, scrolling enabled
+                html(map_embed_codes["GFSI World Hunger Data"], height=800, scrolling=True)
+                st.markdown("---")
+            
+            # Display the new TechnoServe map
+            if show_technoserve_new:
+                st.markdown("#### TechnoServe's Presence in Food Insecure Regions")
+                # Adjusted height to 800px and enabled scrolling
+                html(map_embed_codes["TechnoServe's Presence in Food Insecure Regions"], height=800, scrolling=True)
                 st.markdown("---")
 
-            if show_technoserve:
-                st.markdown("#### Technoserve's Presence")
-                html(map_embed_codes["Technoserve's Presence"], height=357)
+            # Display the original Technoserve map (if you still want it)
+            if show_technoserve_original:
+                st.markdown("#### Technoserve (Original)")
+                html(map_embed_codes["Technoserve (Original)"], height=357, scrolling=True) # Added scrolling here too
                 st.markdown("---")
 
             if show_action_needed:
                 st.markdown("#### Action Needed (Please Verify Embed Code!)")
-                html(map_embed_codes["Action Needed (Check Code)"], height=555)
+                html(map_embed_codes["Action Needed (Check Code)"], height=555, scrolling=True) # Added scrolling here too
                 st.markdown("---")
 
-    elif tab_names[i] in dynamic_dfs: # This handles all your dynamic dataframes
+    elif tab_names[i] in dynamic_dfs:
         with tab:
             st.header(f"Data: '{tab_names[i]}'")
             current_df = dynamic_dfs[tab_names[i]]

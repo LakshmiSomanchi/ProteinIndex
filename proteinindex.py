@@ -190,7 +190,7 @@ for i, tab in enumerate(tabs):
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
-            # --- ADDED: Datawrapper Embed for Protein Dashboard ---
+            # --- Datawrapper Embed for Protein Dashboard ---
             st.subheader("Additional Protein Data Visualization")
             datawrapper_embed_code = """
             <div style="min-height:558px" id="datawrapper-vis-vYiZd"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/vYiZd/embed.js" charset="utf-8" data-target="#datawrapper-vis-vYiZd"></script><noscript><img src="https://datawrapper.dwcdn.net/vYiZd/full.png" alt="" /></noscript></div>
@@ -226,14 +226,15 @@ for i, tab in enumerate(tabs):
                 "Global Hunger Index Map": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
                 """,
-                "GFSI World Hunger Data": """
-                <div style="min-height:800px; width:100%" id="datawrapper-vis-d0yRp"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/d0yRp/embed.js" charset="utf-8" data-target="#datawrapper-vis-d0yRp"></script><noscript><img src="https://datawrapper.dwcdn.net/d0yRp/full.png" alt="" /></noscript></div>
+                # --- MODIFIED: Replaced GFSI World Hunger Data with new embed code ---
+                "US Soy Export Map (2020)": """
+                <div style="min-height:395px" id="datawrapper-vis-CKF5t"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/CKF5t/embed.js" charset="utf-8" data-target="#datawrapper-vis-CKF5t"></script><noscript><img src="https://datawrapper.dwcdn.net/CKF5t/full.png" alt="" /></noscript></div>
                 """,
+                # --- END MODIFICATION ---
                 "TechnoServe's Presence in Food Insecure Regions": """
                 <iframe title="TechnoServe's Presence in Food Insecure Regions" aria-label="Map" id="datawrapper-chart-pf5wv" src="https://datawrapper.dwcdn.net/pf5wv/4/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="800" data-external="1"></iframe><script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}}))}();
                 </script>
                 """,
-                # Fixed: Changed min-height to 800px for full display
                 "Reasons for Food Insecurity": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-w7M9B"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/w7M9B/embed.js" charset="utf-8" data-target="#datawrapper-vis-w7M9B"></script><noscript><img src="https://datawrapper.dwcdn.net/w7M9B/full.png" alt="" /></noscript></div>
                 """
@@ -256,11 +257,13 @@ for i, tab in enumerate(tabs):
                 # Retrieve the embed code for the selected map
                 embed_code = map_embed_codes[selected_map_title]
                 
-                # Enforce a consistent height and scrolling=True
-                # The height parameter here tells the Streamlit iframe how tall to be.
-                # The min-height in the HTML embed code tells the DataWrapper content
-                # how much space it should *at least* try to take.
-                html(embed_code, height=800, scrolling=True)
+                # Determine the height for the Streamlit component based on the embed code's min-height
+                # The new map has min-height:395px, so setting Streamlit's height to around 420-450px
+                # should provide enough space while accommodating Datawrapper's internal sizing.
+                # Let's go with 450px to be safe and provide a little padding.
+                display_height = 800 if selected_map_title != "US Soy Export Map (2020)" else 450
+                
+                html(embed_code, height=display_height, scrolling=True)
                 st.markdown("---")
             else:
                 st.info("Please select a map to display.")

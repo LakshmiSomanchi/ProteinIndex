@@ -226,8 +226,8 @@ for i, tab in enumerate(tabs):
                 "Global Hunger Index Map": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
                 """,
-                # --- MODIFIED: Replaced GFSI World Hunger Data with new embed code and adjusted height ---
-                "GFSI World Hunger Data": """
+                # --- MODIFIED: GFSI World Hunger Data with new embed code and adjusted height ---
+                "GFSI Data": """
                 <div style="min-height:395px" id="datawrapper-vis-CKF5t"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/CKF5t/embed.js" charset="utf-8" data-target="#datawrapper-vis-CKF5t"></script><noscript><img src="https://datawrapper.dwcdn.net/CKF5t/full.png" alt="" /></noscript></div>
                 """,
                 # --- END MODIFICATION ---
@@ -259,8 +259,8 @@ for i, tab in enumerate(tabs):
                 
                 # Determine the height and scrolling behavior for the Streamlit component
                 if selected_map_title == "GFSI World Hunger Data":
-                    display_height = 420 # Slightly more than min-height:395px for full display
-                    do_scrolling = False
+                    display_height = 800  # Increased height to ensure full display
+                    do_scrolling = False # Set to False as requested
                 else:
                     display_height = 800
                     do_scrolling = True

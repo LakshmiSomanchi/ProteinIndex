@@ -226,8 +226,8 @@ for i, tab in enumerate(tabs):
                 "Global Hunger Index Map": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-8t7Fk"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/8t7Fk/embed.js" charset="utf-8" data-target="#datawrapper-vis-8t7Fk"></script><noscript><img src="https://datawrapper.dwcdn.net/8t7Fk/full.png" alt="" /></noscript></div>
                 """,
-                # --- MODIFIED: Replaced GFSI World Hunger Data with new embed code ---
-                "US Soy Export Map (2020)": """
+                # --- MODIFIED: Replaced GFSI World Hunger Data with new embed code and adjusted height ---
+                "GFSI World Hunger Data": """
                 <div style="min-height:395px" id="datawrapper-vis-CKF5t"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/CKF5t/embed.js" charset="utf-8" data-target="#datawrapper-vis-CKF5t"></script><noscript><img src="https://datawrapper.dwcdn.net/CKF5t/full.png" alt="" /></noscript></div>
                 """,
                 # --- END MODIFICATION ---
@@ -257,13 +257,15 @@ for i, tab in enumerate(tabs):
                 # Retrieve the embed code for the selected map
                 embed_code = map_embed_codes[selected_map_title]
                 
-                # Determine the height for the Streamlit component based on the embed code's min-height
-                # The new map has min-height:395px, so setting Streamlit's height to around 420-450px
-                # should provide enough space while accommodating Datawrapper's internal sizing.
-                # Let's go with 450px to be safe and provide a little padding.
-                display_height = 800 if selected_map_title != "US Soy Export Map (2020)" else 450
+                # Determine the height and scrolling behavior for the Streamlit component
+                if selected_map_title == "GFSI World Hunger Data":
+                    display_height = 420 # Slightly more than min-height:395px for full display
+                    do_scrolling = False
+                else:
+                    display_height = 800
+                    do_scrolling = True
                 
-                html(embed_code, height=display_height, scrolling=True)
+                html(embed_code, height=display_height, scrolling=do_scrolling)
                 st.markdown("---")
             else:
                 st.info("Please select a map to display.")

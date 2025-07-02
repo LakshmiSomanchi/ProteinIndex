@@ -230,11 +230,6 @@ for i, tab in enumerate(tabs):
                 "GFSI Data": """
                 <div style="min-height:395px" id="datawrapper-vis-CKF5t"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/CKF5t/embed.js" charset="utf-8" data-target="#datawrapper-vis-CKF5t"></script><noscript><img src="https://datawrapper.dwcdn.net/CKF5t/full.png" alt="" /></noscript></div>
                 """,
-                # --- END MODIFICATION ---
-                "TechnoServe's Presence in Food Insecure Regions": """
-                <iframe title="TechnoServe's Presence in Food Insecure Regions" aria-label="Map" id="datawrapper-chart-pf5wv" src="https://datawrapper.dwcdn.net/pf5wv/4/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="800" data-external="1"></iframe><script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(a){if(void 0!==a.data["datawrapper-height"]){var e=document.querySelectorAll("iframe");for(var t in a.data["datawrapper-height"])for(var r,i=0;r=e[i];i++)if(r.contentWindow===a.source){var d=a.data["datawrapper-height"][t]+"px";r.style.height=d}}}))}();
-                </script>
-                """,
                 "Reasons for Food Insecurity": """
                 <div style="min-height:800px; width:100%" id="datawrapper-vis-w7M9B"><script type="text/javascript" defer src="https://datawrapper.dwcdn.net/w7M9B/embed.js" charset="utf-8" data-target="#datawrapper-vis-w7M9B"></script><noscript><img src="https://datawrapper.dwcdn.net/w7M9B/full.png" alt="" /></noscript></div>
                 """
